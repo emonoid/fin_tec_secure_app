@@ -1,10 +1,8 @@
-import 'package:fin_smart/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:fin_smart/core/local_data/secure_local_data_helper.dart';
 import 'package:fin_smart/core/utils/extensions/extensions.dart';
 import 'package:fin_smart/features/authentication/presentation/pages/login_screen.dart';
 import 'package:fin_smart/inti.dependencies.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
