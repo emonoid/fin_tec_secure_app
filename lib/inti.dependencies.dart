@@ -1,3 +1,4 @@
+import 'package:fin_smart/core/service/biometric_auth_service.dart';
 import 'package:fin_smart/core/service/network_service.dart';
 import 'package:fin_smart/features/authentication/domain/usecases/signup.dart';
 
@@ -32,6 +33,8 @@ void _intiAuth() {
   serviceLocator
     // network api service
     ..registerFactory(() => NetworkServicesImpl())
+    // other services
+    ..registerFactory(() => BiometricAuthService())
     // datasource
     ..registerFactory<AuthRemoteDataSource>(
       () => AuthRemoteDataSourceImpl(networkApiServices: serviceLocator()),
@@ -46,6 +49,6 @@ void _intiAuth() {
     // bloc/cubit
     ..registerFactory(
       () =>
-          AuthCubit(userLogin: serviceLocator(), userSignUp: serviceLocator()),
+          AuthCubit(userLogin: serviceLocator(), userSignUp: serviceLocator(), biometricAuth: serviceLocator(), localDataHelper: serviceLocator()),
     );
 }

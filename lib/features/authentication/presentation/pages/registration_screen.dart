@@ -52,7 +52,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               prev.isAuthenticated != curr.isAuthenticated,
           listener: (context, state) {
             if (state.errorMessage != null) {
-              FinTecSneakBar.customSnackBar(
+              FinTecSneakBar.show(
                 context: context,
                 snackText: state.errorMessage!,
                 snackBackgroundColor: AppColors.redColor,

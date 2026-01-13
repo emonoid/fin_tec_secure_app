@@ -4,7 +4,7 @@ import '../../theme/app_colors.dart';
 import 'fintec_text.dart';
 
 class FinTecSneakBar {
-  static void customSnackBar({
+  static void show({
     required context,
     required String snackText,
     SnackBarBehavior? snackBehavior,

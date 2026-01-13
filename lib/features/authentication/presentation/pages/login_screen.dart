@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
     FocusScope.of(context).unfocus();
     if (_formKey.currentState!.validate()) {
       context.read<AuthCubit>().login(
-        mobile: _usernameController.text,
+        username: _usernameController.text,
         password: _passwordController.text,
       );
     }
@@ -40,6 +40,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _register() {
     context.push(SignUpScreen());
+  }
+
+  void _handleBiometric() {
+    context.read<AuthCubit>().loginWithFingerprint(context);
   }
 
   @override
@@ -53,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
               prev.isAuthenticated != curr.isAuthenticated,
           listener: (context, state) {
             if (state.errorMessage != null) {
-              FinTecSneakBar.customSnackBar(
+              FinTecSneakBar.show(
                 context: context,
                 snackText: state.errorMessage!,
                 snackBackgroundColor: AppColors.redColor,
@@ -119,22 +123,50 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     const SizedBox(height: 20),
 
-                    BlocSelector<AuthCubit, AuthState, bool>(
-                      selector: (state) => state.isLoading,
-                      builder: (context, isLoading) {
-                        return FinTecButton(
-                          buttonText: 'Login',
-                          isLoading: isLoading,
-                          buttonHeight: 50,
-                          borderRadius: 15,
-                          borderColor: AppColors.scaffoldBackGroundColor,
-                          gradient: AppColors.blueButtonGradient,
-                          textColor: AppColors.whiteColor,
-                          fontSize: 16,
-                          showIcon: false,
-                          onTap: isLoading ? null : _login,
-                        );
-                      },
+                    Row(
+                      children: [
+                        Expanded(
+                          child: BlocSelector<AuthCubit, AuthState, bool>(
+                            selector: (state) => state.isLoading,
+                            builder: (context, isLoading) {
+                              return FinTecButton(
+                                buttonText: 'Login',
+                                isLoading: isLoading,
+                                buttonHeight: 50,
+                                borderRadius: 15,
+                                borderColor: AppColors.scaffoldBackGroundColor,
+                                gradient: AppColors.blueButtonGradient,
+                                textColor: AppColors.whiteColor,
+                                fontSize: 16,
+                                showIcon: false,
+                                onTap: isLoading ? null : _login,
+                              );
+                            },
+                          ),
+                        ),
+
+                        const SizedBox(width: 10),
+
+                        Expanded(
+                          child: BlocSelector<AuthCubit, AuthState, bool>(
+                            selector: (state) => state.isLoading,
+                            builder: (context, isLoading) {
+                              return FinTecButton(
+                                buttonText: 'Finger',
+                                isLoading: false,
+                                buttonHeight: 50,
+                                borderRadius: 15,
+                                borderColor: AppColors.scaffoldBackGroundColor,
+                                gradient: AppColors.blueButtonGradient,
+                                textColor: AppColors.whiteColor,
+                                fontSize: 16,
+                                showIcon: false,
+                                onTap: isLoading ? null : _handleBiometric,
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
 
                     const SizedBox(height: 10),

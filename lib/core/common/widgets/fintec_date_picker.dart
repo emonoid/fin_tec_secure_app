@@ -28,7 +28,7 @@ class FinTecDatePicker extends StatelessWidget {
           onTap(pickedDate);
         } else {
           if (context.mounted) {
-            FinTecSneakBar.customSnackBar(
+            FinTecSneakBar.show(
               context: context,
               snackText: "Please select data.",
             );

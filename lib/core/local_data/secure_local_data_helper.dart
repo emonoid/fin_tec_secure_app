@@ -35,16 +35,6 @@ class LocalDataHelper {
     return value == 'true';
   }
 
-  // Subscription / accounts type
-  Future<bool> setSubscriptionStatus(String accountsType) async {
-    await _storage.write(key: 'accounts_type', value: accountsType);
-    return true;
-  }
-
-  Future<String> getSubscriptionStatus() async {
-    return await _storage.read(key: 'accounts_type') ?? '';
-  }
-
   // Tokens
   Future<bool> setToken(String? token) async {
     if (token == null) return false;
@@ -66,76 +56,14 @@ class LocalDataHelper {
     return await _storage.read(key: 'refreshtoken') ?? '';
   }
 
-  // User ID
-  Future<bool> setLoginUserId(int userId) async {
-    await _storage.write(key: 'loginUserId', value: userId.toString());
+  // Biometric flag
+  Future<bool> setBiometricFlag(bool flag) async {
+    await _storage.write(key: 'isBiometricEnabled', value: flag.toString());
     return true;
   }
 
-  Future<int> getLoginUserId() async {
-    final value = await _storage.read(key: 'loginUserId');
-    return int.tryParse(value ?? '') ?? 0;
-  }
-
-  // Username
-  Future<bool> setLoginUserName(String? username) async {
-    await _storage.write(key: 'user_name', value: username ?? '');
-    return true;
-  }
-
-  Future<String> getLoginUserName() async {
-    return await _storage.read(key: 'user_name') ?? '';
-  }
-
-  // Mobile number
-  Future<bool> setLoginUserMobileNo(String? mobileNo) async {
-    await _storage.write(key: 'user_mobile_no', value: mobileNo ?? '');
-    return true;
-  }
-
-  Future<String> getLoginUserMobileNo() async {
-    return await _storage.read(key: 'user_mobile_no') ?? '';
-  }
-
-  // Address
-  Future<bool> setUserAddress(String address) async {
-    await _storage.write(key: 'address', value: address);
-    return true;
-  }
-
-  Future<String> getUserAddress() async {
-    return await _storage.read(key: 'address') ?? '';
-  }
-
-  // Shop ID
-  Future<bool> setShopId(int shopId) async {
-    await _storage.write(key: 'shop_id', value: shopId.toString());
-    return true;
-  }
-
-  Future<int?> getShopId() async {
-    final value = await _storage.read(key: 'shop_id');
-    return int.tryParse(value ?? '');
-  }
-
-  // User ID
-  Future<bool> setUserId(int userId) async {
-    await _storage.write(key: 'userId', value: userId.toString());
-    return true;
-  }
-
-  Future<int?> getUserId() async {
-    final value = await _storage.read(key: 'userId');
-    return int.tryParse(value ?? '');
-  }
-
-  // Role
-  Future<bool> setRole(String role) async {
-    await _storage.write(key: 'role', value: role);
-    return true;
-  }
-
-  Future<String> getRole() async {
-    return await _storage.read(key: 'role') ?? 'emp';
+  Future<bool> getBiometricFlag() async {
+    final value = await _storage.read(key: 'isBiometricEnabled');
+    return value == 'true';
   }
 }
