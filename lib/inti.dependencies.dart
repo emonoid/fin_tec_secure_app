@@ -48,7 +48,12 @@ void _intiAuth() {
     ..registerFactory(() => UserSignup(serviceLocator()))
     // bloc/cubit
     ..registerFactory(
-      () =>
-          AuthCubit(userLogin: serviceLocator(), userSignUp: serviceLocator(), biometricAuth: serviceLocator(), localDataHelper: serviceLocator()),
+      () => AuthCubit(
+        userLogin: serviceLocator(),
+        userSignUp: serviceLocator(),
+        biometricAuth: serviceLocator(),
+        localDataHelper: serviceLocator(),
+        userSession: serviceLocator(),
+      ),
     );
 }

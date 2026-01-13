@@ -101,7 +101,7 @@ class NetworkServicesImpl implements NetworkServices {
   }
 
   static Future<Map<String, String>> mainHeaders({String? token}) async {
-    String localToken = await serviceLocator<AppUserCubit>().loadToken();
+    String localToken = serviceLocator<AppUserCubit>().state.accessToken ?? '';
     Map<String, String> headers;
     if (localToken.isNotEmpty || token != null) {
       headers = {
@@ -127,6 +127,7 @@ dynamic returnResponse(Response response) {
       dynamic responseJson = {
         "success": true,
         "message": "User Created",
+        "data": response.body,
         "status_code": response.statusCode,
       };
       return responseJson;

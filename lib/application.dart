@@ -1,12 +1,10 @@
-import 'package:fin_smart/core/common/cubits/app_user/app_user_cubit.dart';
-import 'package:fin_smart/core/theme/dark_theme.dart';
+ import 'package:fin_smart/core/theme/dark_theme.dart';
 import 'package:fin_smart/core/theme/light_theme.dart';
-import 'package:fin_smart/core/utils/enums.dart'; 
+import 'package:fin_smart/core/utils/enums.dart';
 import 'package:fin_smart/features/authentication/presentation/pages/splash_screen.dart';
 import 'package:fin_smart/l10n/app_localizations.dart';
 import 'package:fin_smart/l10n/l10n.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/material.dart'; 
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 class FinTecApp extends StatefulWidget {
@@ -22,8 +20,7 @@ class FinTecApp extends StatefulWidget {
 class _FinTecAppState extends State<FinTecApp> {
   @override
   void initState() {
-    super.initState();
-    context.read<AppUserCubit>().checkLoginSession();
+    super.initState(); 
   }
 
   @override
@@ -40,14 +37,7 @@ class _FinTecAppState extends State<FinTecApp> {
       supportedLocales: L10n.all,
       locale: widget.local,
       debugShowCheckedModeBanner: false,
-      home: BlocSelector<AppUserCubit, AppUserState, bool>(
-        selector: (state) {
-          return state is AppUserLoggedIn;
-        },
-        builder: (context, isLoggedIn) {
-          return SplashPage();
-        },
-      ),
+      home: SplashPage(),
     );
   }
 }

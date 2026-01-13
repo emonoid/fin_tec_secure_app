@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/local_data/secure_local_data_helper.dart';
@@ -11,16 +13,13 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<Failure, dynamic>> login({
-    required String mobile,
+    required String username,
     required String password,
   }) async {
     try {
-      // await Future.delayed(const Duration(seconds: 3));
-      var response = await remoteDataSource.login(mobile, password);
+      var response = await remoteDataSource.login(username, password);
       if (response['success']) {
-        await localDataHelper.setToken(response['accessToken']);
-        await localDataHelper.setLoginFlag(true);
-        return Right(response);
+        return Right(jsonDecode(response['data']));
       } else {
         return Left(Failure(response['message'].toString()));
       }

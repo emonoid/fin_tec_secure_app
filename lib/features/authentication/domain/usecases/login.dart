@@ -10,18 +10,18 @@ class UserLogin implements UseCase<dynamic, UserLoginParams> {
   @override
   Future<Either<Failure, dynamic>> call(UserLoginParams params) async {
     return await authRepository.login(
-      mobile: params.mobile,
+      username: params.username,
       password: params.password,
     );
   }
 }
 
 class UserLoginParams {
-  final String mobile;
+  final String username;
   final String password;
 
   UserLoginParams({
-    required this.mobile,
+    required this.username,
     required this.password,
   });
 }

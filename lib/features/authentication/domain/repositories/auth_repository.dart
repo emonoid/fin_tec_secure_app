@@ -3,7 +3,7 @@ import '../../../../core/error/failures.dart';
 
 abstract interface class AuthRepository {
   Future<Either<Failure, dynamic>> login({
-    required String mobile,
+    required String username,
     required String password,
   });
 

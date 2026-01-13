@@ -34,6 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
       context.read<AuthCubit>().login(
         username: _usernameController.text,
         password: _passwordController.text,
+        context: context
       );
     }
   }
@@ -86,10 +87,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     TextFormField(
                       controller: _usernameController,
-                      keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(labelText: 'Mobile'),
+                      keyboardType: TextInputType.text,
+                      decoration: const InputDecoration(labelText: 'Username'),
                       validator: (value) => value == null || value.isEmpty
-                          ? 'Enter mobile'
+                          ? 'Enter username'
                           : null,
                     ),
 

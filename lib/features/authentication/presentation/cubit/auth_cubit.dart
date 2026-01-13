@@ -1,7 +1,10 @@
+import 'package:fin_smart/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:fin_smart/core/common/widgets/sneak_bar.dart';
 import 'package:fin_smart/core/local_data/secure_local_data_helper.dart';
 import 'package:fin_smart/core/service/biometric_auth_service.dart';
+import 'package:fin_smart/core/utils/enums.dart';
 import 'package:fin_smart/core/utils/extensions/extensions.dart';
+import 'package:fin_smart/features/account/presentation/screens/account_home_screen.dart';
 import 'package:fin_smart/features/authentication/domain/usecases/signup.dart';
 import 'package:fin_smart/features/authentication/presentation/pages/create_account_and_biometric_screen.dart';
 import 'package:flutter/material.dart';
@@ -17,16 +20,19 @@ class AuthCubit extends Cubit<AuthState> {
   final UserSignup _userSignUp;
   final BiometricAuthService _biometricAuth;
   final LocalDataHelper _localDataHelper;
+  final AppUserCubit _userSession;
 
   AuthCubit({
     required UserLogin userLogin,
     required UserSignup userSignUp,
     required BiometricAuthService biometricAuth,
     required LocalDataHelper localDataHelper,
+    required AppUserCubit userSession,
   }) : _userLogin = userLogin,
        _userSignUp = userSignUp,
        _biometricAuth = biometricAuth,
        _localDataHelper = localDataHelper,
+       _userSession = userSession,
        super(const AuthState());
 
   /// Toggles password visibility in the UI
@@ -38,18 +44,29 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> login({
     required String username,
     required String password,
+    required BuildContext context,
   }) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
 
     final res = await _userLogin(
-      UserLoginParams(mobile: username, password: password),
+      UserLoginParams(username: username, password: password),
     );
 
     res.fold(
       (failure) =>
           emit(state.copyWith(isLoading: false, errorMessage: failure.message)),
-      (success) =>
-          emit(state.copyWith(isLoading: false, isAuthenticated: true)),
+      (success) async {
+        emit(state.copyWith(isLoading: false, isAuthenticated: true));
+
+        await _localDataHelper.setRefreshToken(success['refresh_token']);
+
+        context.read<AppUserCubit>().setAppUserStatus(
+          AppUserStatus.authenticated,
+          accessToken: success['access_token'],
+        );
+
+        context.push(AccountHomeScreen());
+      },
     );
   }
 
@@ -89,11 +106,15 @@ class AuthCubit extends Cubit<AuthState> {
       final refreshToken = await _localDataHelper.getRefreshToken();
       if (refreshToken.isNotEmpty) {
         emit(state.copyWith(isAuthenticated: true));
+        // TODO: call refresh token API to get new access token
+        context.push(AccountHomeScreen());
       } else {
-        FinTecSneakBar.show(
-          context: context,
-          snackText: "Please login manually first to enable biometric login.",
-        );
+        if (context.mounted) {
+          FinTecSneakBar.show(
+            context: context,
+            snackText: "Please login manually first to enable biometric login.",
+          );
+        }
       }
     } else {
       emit(state.copyWith(isAuthenticated: false));
