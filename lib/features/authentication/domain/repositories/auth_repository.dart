@@ -6,4 +6,11 @@ abstract interface class AuthRepository {
     required String mobile,
     required String password,
   });
+
+   Future<Either<Failure, dynamic>> signUp({
+    required String username,
+    required String fullname,
+    required String email,
+    required String password,
+  });
 }

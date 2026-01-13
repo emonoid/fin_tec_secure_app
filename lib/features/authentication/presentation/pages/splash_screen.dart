@@ -21,7 +21,7 @@ class _SplashPageState extends State<SplashPage> {
       if (await secureStorage.getLoginFlag()) {
         // TODO: Navigate to Home Page
       } else {
-        if (mounted) context.pushAndRemoveUntil(LoginPage());
+        if (mounted) context.pushAndRemoveUntil(LoginScreen());
       }
     });
   }

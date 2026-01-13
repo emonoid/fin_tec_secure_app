@@ -28,4 +28,28 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(Failure(exception.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, dynamic>> signUp({
+    required String username,
+    required String fullname,
+    required String email,
+    required String password,
+  }) async {
+    try {
+      var response = await remoteDataSource.signUp(
+        username,
+        fullname,
+        email,
+        password,
+      );
+      if (response['success']) {
+        return Right(response);
+      } else {
+        return Left(Failure(response['message'].toString()));
+      }
+    } catch (exception) {
+      return Left(Failure(exception.toString()));
+    }
+  }
 }

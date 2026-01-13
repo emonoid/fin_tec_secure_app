@@ -1,5 +1,3 @@
-import 'package:fin_smart/core/utils/extensions/extensions.dart';
-import 'package:fin_smart/features/authentication/presentation/pages/registration_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '/features/authentication/presentation/cubit/auth_cubit.dart';
@@ -9,16 +7,18 @@ import '../../../../core/common/widgets/sneak_bar.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'package:fin_smart/l10n/app_localizations.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
+  final _fullNameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   @override
@@ -28,18 +28,17 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _login() {
+  void _next() {
     FocusScope.of(context).unfocus();
     if (_formKey.currentState!.validate()) {
-      context.read<AuthCubit>().login(
-        mobile: _usernameController.text,
+      context.read<AuthCubit>().register(
+        username: _usernameController.text,
+        fullname: _fullNameController.text,
+        email: _emailController.text,
         password: _passwordController.text,
+        context: context,
       );
     }
-  }
-
-  void _register() {
-    context.push(SignUpScreen());
   }
 
   @override
@@ -82,11 +81,32 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     TextFormField(
                       controller: _usernameController,
-                      keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(labelText: 'Mobile'),
+                      keyboardType: TextInputType.text,
+                      decoration: const InputDecoration(labelText: 'Username'),
                       validator: (value) => value == null || value.isEmpty
-                          ? 'Enter mobile'
+                          ? 'Enter username'
                           : null,
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    TextFormField(
+                      controller: _fullNameController,
+                      keyboardType: TextInputType.text,
+                      decoration: const InputDecoration(labelText: 'Full Name'),
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Enter Full Name'
+                          : null,
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    TextFormField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: const InputDecoration(labelText: 'Email'),
+                      validator: (value) =>
+                          value == null || value.isEmpty ? 'Enter Email' : null,
                     ),
 
                     const SizedBox(height: 12),
@@ -123,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       selector: (state) => state.isLoading,
                       builder: (context, isLoading) {
                         return FinTecButton(
-                          buttonText: 'Login',
+                          buttonText: 'Next',
                           isLoading: isLoading,
                           buttonHeight: 50,
                           borderRadius: 15,
@@ -132,24 +152,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           textColor: AppColors.whiteColor,
                           fontSize: 16,
                           showIcon: false,
-                          onTap: isLoading ? null : _login,
+                          onTap: isLoading ? null : _next,
                         );
                       },
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    FinTecButton(
-                      buttonText: 'SignUp',
-                      isLoading: false,
-                      buttonHeight: 50,
-                      borderRadius: 15,
-                      borderColor: AppColors.scaffoldBackGroundColor,
-                      gradient: AppColors.blueButtonGradient,
-                      textColor: AppColors.whiteColor,
-                      fontSize: 16,
-                      showIcon: false,
-                      onTap: () => _register(),
                     ),
                   ],
                 ),

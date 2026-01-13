@@ -1,4 +1,5 @@
 class ApiEndPoints {
-  static const String baseUrl = 'http://10.0.2.2:2000/api';
-  static String loginUrl = '$baseUrl/user/login';
+  static const String baseUrl = 'http://192.168.0.102';
+  static String loginUrl = '$baseUrl/users/login';
+  static String signUpUrl = '$baseUrl/users';
 }

@@ -3,7 +3,12 @@ import '/core/service/network_service_impl.dart';
 
 abstract interface class AuthRemoteDataSource {
   Future<dynamic> login(String email, String password);
-  Future<String> signUp(String email, String password);
+  Future<dynamic> signUp(
+    String username,
+    String fullname,
+    String email,
+    String password,
+  );
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -15,7 +20,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       var body = {'mobile': mobile, 'password': password};
 
-      var response = await networkApiServices.postApi(body, ApiEndPoints.loginUrl);
+      var response = await networkApiServices.postApi(
+        body,
+        ApiEndPoints.loginUrl,
+      );
 
       return response;
     } catch (exception) {
@@ -24,8 +32,27 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<String> signUp(String email, String password) {
-    // TODO: implement signUp
-    throw UnimplementedError();
+  Future<dynamic> signUp(
+    String username,
+    String fullname,
+    String email,
+    String password,
+  ) async {
+    try {
+      var body = {
+        'username': username,
+        'fullname': fullname,
+        'email': email,
+        'password': password,
+      };
+
+      var response = await networkApiServices.postApi(
+        body,
+        ApiEndPoints.signUpUrl,
+      );
+      return response;
+    } catch (exception) {
+      rethrow;
+    }
   }
 }

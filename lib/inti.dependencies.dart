@@ -1,3 +1,6 @@
+import 'package:fin_smart/core/service/network_service.dart';
+import 'package:fin_smart/features/authentication/domain/usecases/signup.dart';
+
 import '/core/common/cubits/locale_cubit/language_cubit.dart';
 import 'core/local_data/secure_local_data_helper.dart';
 import '/core/common/cubits/app_user/app_user_cubit.dart';
@@ -13,11 +16,11 @@ import 'features/authentication/presentation/cubit/auth_cubit.dart';
 final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
-  // core 
+  // core
   serviceLocator.registerLazySingleton<LocalDataHelper>(
     () => LocalDataHelper(),
   );
-   serviceLocator.registerLazySingleton(() => AppUserCubit(serviceLocator()));
+  serviceLocator.registerLazySingleton(() => AppUserCubit(serviceLocator()));
   serviceLocator.registerLazySingleton(() => LanguageCubit(serviceLocator()));
   serviceLocator.registerLazySingleton(() => ThemeCubit(serviceLocator()));
 
@@ -39,6 +42,10 @@ void _intiAuth() {
     )
     // usecase
     ..registerFactory(() => UserLogin(serviceLocator()))
+    ..registerFactory(() => UserSignup(serviceLocator()))
     // bloc/cubit
-    ..registerFactory(() => AuthCubit(userLogin: serviceLocator()));
+    ..registerFactory(
+      () =>
+          AuthCubit(userLogin: serviceLocator(), userSignUp: serviceLocator()),
+    );
 }
