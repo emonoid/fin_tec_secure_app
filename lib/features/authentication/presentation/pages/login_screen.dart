@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:fin_smart/core/utils/extensions/extensions.dart';
 import 'package:fin_smart/features/authentication/presentation/pages/registration_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jailbreak_root_detection/jailbreak_root_detection.dart';
 import '/features/authentication/presentation/cubit/auth_cubit.dart';
 import '../../../../core/common/widgets/fintec_text.dart';
 import '../../../../core/common/widgets/fintec_button.dart';
@@ -22,6 +25,72 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+
+    securityChecks();
+  }
+
+  void securityChecks() async {
+    final isNotTrust = await JailbreakRootDetection.instance.isNotTrust;
+    final isJailBroken = await JailbreakRootDetection.instance.isJailBroken;
+    final isRealDevice = await JailbreakRootDetection.instance.isRealDevice;
+    final isOnExternalStorage =
+        await JailbreakRootDetection.instance.isOnExternalStorage;
+    final isDevMode = await JailbreakRootDetection.instance.isDevMode;
+    final isVpnActive = await this.isVpnActive();
+
+    String? message;
+
+    if (isNotTrust) {
+      message = "Device is not trusted.";
+    } else if (isJailBroken) {
+      message = "Device is rooted.";
+    } else if (!isRealDevice) {
+      message = "Device is not a real device.";
+    } else if (isOnExternalStorage) {
+      message = "App is running from external storage.";
+    } else if (isDevMode) {
+      message = "Device is in developer mode.";
+    } else if (isVpnActive) {
+      message = "VPN is active.";
+    }
+
+    if (isNotTrust ||
+        isJailBroken ||
+        !isRealDevice ||
+        isOnExternalStorage ||
+        isDevMode ||
+        isVpnActive) {
+      FinTecSneakBar.show(
+        context: context,
+        snackText: "$message The app will exit now.",
+        snackBackgroundColor: AppColors.redColor,
+      );
+      await Future.delayed(const Duration(seconds: 3));
+      exit(0);
+    }
+  }
+
+  Future<bool> isVpnActive() async {
+    final interfaces = await NetworkInterface.list(
+      includeLoopback: false,
+      type: InternetAddressType.any,
+    );
+
+    for (var interface in interfaces) {
+      final name = interface.name.toLowerCase();
+      if (name.contains('tun') ||
+          name.contains('ppp') ||
+          name.contains('tap') ||
+          name.contains('ipsec')) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @override
   void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();
@@ -34,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
       context.read<AuthCubit>().login(
         username: _usernameController.text,
         password: _passwordController.text,
-        context: context
+        context: context,
       );
     }
   }
