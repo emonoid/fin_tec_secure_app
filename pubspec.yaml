@@ -19,7 +19,7 @@ dependencies:
   dartz: ^0.10.1
   flutter_bloc: ^9.1.1
   get_it: ^9.2.0  
-  http: ^1.6.0
+  dio: ^5.9.0
   flutter_localizations:
     sdk: flutter  
   intl: ^0.20.2   
@@ -29,6 +29,7 @@ dependencies:
   jailbreak_root_detection: ^1.2.0+1
   flutter_screenshot_blocker: ^1.0.2
   flutter_secure_storage: ^10.0.0
+  vpn_detector: ^1.2.0
 
 dev_dependencies:
   flutter_test:

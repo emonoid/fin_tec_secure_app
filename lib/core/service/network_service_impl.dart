@@ -1,14 +1,38 @@
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
-// import 'package:flutter/foundation.dart';
+import 'dart:convert'; 
+import 'package:dio/dio.dart';
 import 'package:fin_smart/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:fin_smart/inti.dependencies.dart';
-import 'package:http/http.dart';
 import 'network_service.dart';
-import 'package:http/http.dart' as http;
 
 class NetworkServicesImpl implements NetworkServices {
+  late final Dio _dio;
+
+  NetworkServicesImpl() {
+    _dio = Dio(
+      BaseOptions(
+        connectTimeout: const Duration(seconds: 15),
+        receiveTimeout: const Duration(seconds: 15),
+        sendTimeout: const Duration(seconds: 15),
+        responseType: ResponseType.plain,
+        validateStatus: (status) => status != null,
+      ),
+    );
+
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          handler.next(options);
+        },
+        onResponse: (response, handler) {
+          handler.next(response);
+        },
+        onError: (e, handler) {
+          handler.next(e);
+        },
+      ),
+    );
+  }
+
   @override
   Future<dynamic> getApi(
     url, {
@@ -16,40 +40,29 @@ class NetworkServicesImpl implements NetworkServices {
     String? token,
     int? timeOut,
   }) async {
-    ///check this request url and print log message
-    log('====> Http Call: $url');
-
-    Map<String, String> finalHeaders =
-        headers ?? await mainHeaders(token: token);
-
-    dynamic responseJson;
     try {
-      http.Response response = await http.get(
-        Uri.parse(url),
-        headers: finalHeaders,
+      final response = await _dio.get(
+        url,
+        options: Options(headers: headers ?? await mainHeaders(token: token)),
       );
-      responseJson = await returnResponse(response);
-
-      ///print output result log message
-      log(
-        '====> Http Response: [${response.statusCode}] $url\n${utf8.decode(response.bodyBytes)}',
-      );
-    } on SocketException {
-      responseJson = await returnResponse(
+      return returnResponse(_toHttpResponse(response));
+    } on DioException catch (_) {
+      return returnResponse(
         Response(
-          "{\"success\": false, \"message\": \"Server not found!\"}",
-          500,
+          requestOptions: RequestOptions(path: url),
+          data: '{"success": false, "message": "Server not found!"}',
+          statusCode: 500,
         ),
       );
-    } catch (e) {
-      responseJson = await returnResponse(
+    } catch (_) {
+      return returnResponse(
         Response(
-          "{\"success\": false, \"message\": \"Something went wrong!\"}",
-          500,
+          requestOptions: RequestOptions(path: url),
+          data: '{"success": false, "message": "Something went wrong!"}',
+          statusCode: 500,
         ),
       );
     }
-    return responseJson;
   }
 
   @override
@@ -61,104 +74,71 @@ class NetworkServicesImpl implements NetworkServices {
     bool bodyEncode = true,
     int? timeOut,
   }) async {
-    Map<String, String> finalHeaders =
-        headers ?? await mainHeaders(token: token);
-
-    ///check this request url and print log message
-    log('====> Http Call: $url');
-    log('====> Http Request Body : ${json.encode(data)}');
-
-    Map<String, dynamic> responseJson;
     try {
-      http.Response response = await http.post(
-        Uri.parse(url),
-        headers: finalHeaders,
-        body: json.encode(data),
+      final response = await _dio.post(
+        url,
+        data: bodyEncode ? json.encode(data) : data,
+        options: Options(headers: headers ?? await mainHeaders(token: token)),
       );
-      responseJson = await returnResponse(response);
-
-      ///print output result log message
-      log(
-        '====> Http Response: [${response.statusCode}] $url\n${utf8.decode(response.bodyBytes)}',
-      );
-    } on SocketException {
-      responseJson = await returnResponse(
+      return returnResponse(_toHttpResponse(response));
+    } on DioException catch (_) {
+      return returnResponse(
         Response(
-          "{\"success\": false, \"message\": \"Server not found!\"}",
-          500,
+          requestOptions: RequestOptions(path: url),
+          data: '{"success": false, "message": "Server not found!"}',
+          statusCode: 500,
         ),
       );
-    } catch (e) {
-      responseJson = await returnResponse(
+    } catch (_) {
+      return returnResponse(
         Response(
-          "{\"success\": false, \"message\": \"Something went wrong!\"}",
-          500,
+          requestOptions: RequestOptions(path: url),
+          data: '{"success": false, "message": "Something went wrong!"}',
+          statusCode: 500,
         ),
       );
     }
-
-    return responseJson;
   }
 
   static Future<Map<String, String>> mainHeaders({String? token}) async {
     String localToken = serviceLocator<AppUserCubit>().state.accessToken ?? '';
-    Map<String, String> headers;
     if (localToken.isNotEmpty || token != null) {
-      headers = {
+      return {
         'Content-Type': 'application/json',
-        'Vary': 'Accept',
-        "Accept": "*",
-        "Authorization": 'Bearer ${token ?? localToken}',
-      };
-    } else {
-      headers = {
-        'Content-Type': 'application/json',
-        'Vary': 'Accept',
-        "Accept": "*",
+        'Accept': '*/*',
+        'Authorization': 'Bearer ${token ?? localToken}',
       };
     }
-    return headers;
+    return {'Content-Type': 'application/json', 'Accept': '*/*'};
+  }
+
+  Response _toHttpResponse(Response dioResponse) {
+    return Response(
+      requestOptions: dioResponse.requestOptions,
+      data: dioResponse.data,
+      statusCode: dioResponse.statusCode,
+    );
   }
 }
 
 dynamic returnResponse(Response response) {
   switch (response.statusCode) {
     case 200:
-      dynamic responseJson = {
+      return {
         "success": true,
         "message": "User Created",
-        "data": response.body,
+        "data": response.data,
         "status_code": response.statusCode,
       };
-      return responseJson;
     case 400:
-      dynamic responseJson = {
-        "success": false,
-        "message": response.body,
-        "status_code": response.statusCode,
-      };
-      return responseJson;
     case 401:
-      dynamic responseJson = {
-        "success": false,
-        "message": response.body,
-        "status_code": response.statusCode,
-      };
-      return responseJson;
-    case 500:
-      dynamic responseJson = {
-        "success": false,
-        "message": response.body,
-        "status_code": response.statusCode,
-      };
-      return responseJson;
     case 422:
-      dynamic responseJson = {
+    case 500:
+      return {
         "success": false,
-        "message": response.body,
+        "message": response.data,
         "status_code": response.statusCode,
       };
-      return responseJson;
     default:
       throw Exception(
         'Error ccoured while communicating with server ${response.statusCode}',

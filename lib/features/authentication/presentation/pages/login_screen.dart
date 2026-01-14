@@ -28,66 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
 
-    securityChecks();
-  }
-
-  void securityChecks() async {
-    final isNotTrust = await JailbreakRootDetection.instance.isNotTrust;
-    final isJailBroken = await JailbreakRootDetection.instance.isJailBroken;
-    final isRealDevice = await JailbreakRootDetection.instance.isRealDevice;
-    final isOnExternalStorage =
-        await JailbreakRootDetection.instance.isOnExternalStorage;
-    final isDevMode = await JailbreakRootDetection.instance.isDevMode;
-    final isVpnActive = await this.isVpnActive();
-
-    String? message;
-
-    if (isNotTrust) {
-      message = "Device is not trusted.";
-    } else if (isJailBroken) {
-      message = "Device is rooted.";
-    } else if (!isRealDevice) {
-      message = "Device is not a real device.";
-    } else if (isOnExternalStorage) {
-      message = "App is running from external storage.";
-    } else if (isDevMode) {
-      message = "Device is in developer mode.";
-    } else if (isVpnActive) {
-      message = "VPN is active.";
-    }
-
-    if (isNotTrust ||
-        isJailBroken ||
-        !isRealDevice ||
-        isOnExternalStorage ||
-        isDevMode ||
-        isVpnActive) {
-      FinTecSneakBar.show(
-        context: context,
-        snackText: "$message The app will exit now.",
-        snackBackgroundColor: AppColors.redColor,
-      );
-      await Future.delayed(const Duration(seconds: 3));
-      exit(0);
-    }
-  }
-
-  Future<bool> isVpnActive() async {
-    final interfaces = await NetworkInterface.list(
-      includeLoopback: false,
-      type: InternetAddressType.any,
-    );
-
-    for (var interface in interfaces) {
-      final name = interface.name.toLowerCase();
-      if (name.contains('tun') ||
-          name.contains('ppp') ||
-          name.contains('tap') ||
-          name.contains('ipsec')) {
-        return true;
-      }
-    }
-    return false;
+    context.read<AuthCubit>().securityChecks(context);
   }
 
   @override
