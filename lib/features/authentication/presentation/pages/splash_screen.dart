@@ -1,4 +1,4 @@
-import 'package:fin_smart/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:fin_smart/core/common/cubits/app_user/user_session_cubit.dart';
 import 'package:fin_smart/core/local_data/secure_local_data_helper.dart';
 import 'package:fin_smart/core/utils/enums.dart';
 import 'package:fin_smart/core/utils/extensions/extensions.dart';
@@ -20,10 +20,10 @@ class _SplashPageState extends State<SplashPage> {
     super.initState();
     Future.microtask(() async {
       await Future.delayed(const Duration(seconds: 2));
-      if (context.read<AppUserCubit>().state.accessToken != null &&
-          context.read<AppUserCubit>().state.accessToken!.isNotEmpty &&
-          context.read<AppUserCubit>().state.status ==
-              AppUserStatus.authenticated) {
+      if (context.read<UserSessionCubit>().state.accessToken != null &&
+          context.read<UserSessionCubit>().state.accessToken!.isNotEmpty &&
+          context.read<UserSessionCubit>().state.status ==
+              UserSessionStatus.authenticated) {
         // TODO: Navigate to Home Page
       } else {
         if (mounted) context.pushAndRemoveUntil(LoginScreen());

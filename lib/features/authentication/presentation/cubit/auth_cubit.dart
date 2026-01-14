@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:fin_smart/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:fin_smart/core/common/cubits/app_user/user_session_cubit.dart';
 import 'package:fin_smart/core/common/widgets/sneak_bar.dart';
 import 'package:fin_smart/core/local_data/secure_local_data_helper.dart';
 import 'package:fin_smart/core/service/biometric_auth_service.dart';
@@ -24,15 +24,15 @@ class AuthCubit extends Cubit<AuthState> {
   final UserLogin _userLogin;
   final UserSignup _userSignUp;
   final BiometricAuthService _biometricAuth;
-  final LocalDataHelper _localDataHelper;
-  final AppUserCubit _userSession;
+  final SecureLocalDataHelper _localDataHelper;
+  final UserSessionCubit _userSession;
 
   AuthCubit({
     required UserLogin userLogin,
     required UserSignup userSignUp,
     required BiometricAuthService biometricAuth,
-    required LocalDataHelper localDataHelper,
-    required AppUserCubit userSession,
+    required SecureLocalDataHelper localDataHelper,
+    required UserSessionCubit userSession,
   }) : _userLogin = userLogin,
        _userSignUp = userSignUp,
        _biometricAuth = biometricAuth,
@@ -65,8 +65,8 @@ class AuthCubit extends Cubit<AuthState> {
 
         await _localDataHelper.setRefreshToken(success['refresh_token']);
 
-        context.read<AppUserCubit>().setAppUserStatus(
-          AppUserStatus.authenticated,
+        context.read<UserSessionCubit>().setAppUserStatus(
+          UserSessionStatus.authenticated,
           accessToken: success['access_token'],
         );
 
@@ -157,7 +157,7 @@ class AuthCubit extends Cubit<AuthState> {
         isOnExternalStorage ||
         isDevMode ||
         isVpnActive) {
-      FinTecSneakBar.show(   
+      FinTecSneakBar.show(
         context: context,
         snackText: "$message The app will exit now.",
         snackBackgroundColor: AppColors.redColor,

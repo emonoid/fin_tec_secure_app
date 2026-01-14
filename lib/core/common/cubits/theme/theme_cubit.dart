@@ -4,19 +4,16 @@ import '../../../utils/enums.dart';
 import 'theme_state.dart';
 
 class ThemeCubit extends Cubit<ThemeState> {
-  final LocalDataHelper _prefs;
+  final SecureLocalDataHelper _prefs;
 
-  ThemeCubit(this._prefs)
-      : super(const ThemeState(ThemeModes.light)) {
+  ThemeCubit(this._prefs) : super(const ThemeState(ThemeModes.light)) {
     _loadTheme();
   }
 
   Future<void> _loadTheme() async {
     final storedTheme = await _prefs.getTheme();
     emit(
-      ThemeState(
-        storedTheme == 'dark' ? ThemeModes.dark : ThemeModes.light,
-      ),
+      ThemeState(storedTheme == 'dark' ? ThemeModes.dark : ThemeModes.light),
     );
   }
 

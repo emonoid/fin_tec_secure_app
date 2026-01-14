@@ -4,10 +4,9 @@ import '../../../local_data/secure_local_data_helper.dart';
 import 'language_state.dart';
 
 class LanguageCubit extends Cubit<LanguageState> {
-  final LocalDataHelper _prefs;
+  final SecureLocalDataHelper _prefs;
 
-  LanguageCubit(this._prefs)
-      : super(const LanguageState(Locale('en'))) {
+  LanguageCubit(this._prefs) : super(const LanguageState(Locale('en'))) {
     _loadLocale();
   }
 

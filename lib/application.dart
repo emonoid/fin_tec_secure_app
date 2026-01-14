@@ -7,6 +7,8 @@ import 'package:fin_smart/l10n/l10n.dart';
 import 'package:flutter/material.dart'; 
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
 class FinTecApp extends StatefulWidget {
   const FinTecApp({super.key, required this.local, required this.themeMode});
 
@@ -27,6 +29,7 @@ class _FinTecAppState extends State<FinTecApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'FinTec',
+      navigatorKey: navigatorKey,
       theme: widget.themeMode == ThemeModes.light ? lightTheme : darkTheme,
       localizationsDelegates: const [
         AppLocalizations.delegate,

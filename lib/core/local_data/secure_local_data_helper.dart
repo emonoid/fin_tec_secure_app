@@ -1,9 +1,8 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class LocalDataHelper {
+class SecureLocalDataHelper {
   final FlutterSecureStorage _storage = FlutterSecureStorage();
 
-  // Locale
   Future<bool> setLocale(String? locale) async {
     if (locale == null) return false;
     await _storage.write(key: 'locale', value: locale);
@@ -14,7 +13,6 @@ class LocalDataHelper {
     return await _storage.read(key: 'locale') ?? 'en';
   }
 
-  // Theme
   Future<bool> setTheme(String theme) async {
     await _storage.write(key: 'theme', value: theme);
     return true;
@@ -24,7 +22,6 @@ class LocalDataHelper {
     return await _storage.read(key: 'theme') ?? 'light';
   }
 
-  // Login flag
   Future<bool> setLoginFlag(bool flag) async {
     await _storage.write(key: 'isLoggedIn', value: flag.toString());
     return true;
@@ -35,7 +32,6 @@ class LocalDataHelper {
     return value == 'true';
   }
 
-  // Tokens
   Future<bool> setToken(String? token) async {
     if (token == null) return false;
     await _storage.write(key: 'accesstoken', value: token);
@@ -56,7 +52,6 @@ class LocalDataHelper {
     return await _storage.read(key: 'refreshtoken') ?? '';
   }
 
-  // Biometric flag
   Future<bool> setBiometricFlag(bool flag) async {
     await _storage.write(key: 'isBiometricEnabled', value: flag.toString());
     return true;

@@ -2,7 +2,7 @@ import 'package:fin_smart/application.dart';
 import 'package:fin_smart/core/common/cubits/locale_cubit/language_state.dart';
 import 'package:fin_smart/core/common/cubits/theme/theme_state.dart';
 import '/core/common/cubits/locale_cubit/language_cubit.dart';
-import '/core/common/cubits/app_user/app_user_cubit.dart';
+import 'core/common/cubits/app_user/user_session_cubit.dart';
 import '/features/authentication/presentation/cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,8 +16,8 @@ void main() async {
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider<AppUserCubit>(
-          create: (_) => serviceLocator<AppUserCubit>(),
+        BlocProvider<UserSessionCubit>(
+          create: (_) => serviceLocator<UserSessionCubit>(),
         ),
         BlocProvider<AuthCubit>(create: (_) => serviceLocator<AuthCubit>()),
         BlocProvider<LanguageCubit>(

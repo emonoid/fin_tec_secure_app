@@ -8,7 +8,7 @@ import '../datasources/auth_remote_datasource.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
-  final LocalDataHelper localDataHelper;
+  final SecureLocalDataHelper localDataHelper;
   const AuthRepositoryImpl(this.remoteDataSource, this.localDataHelper);
 
   @override

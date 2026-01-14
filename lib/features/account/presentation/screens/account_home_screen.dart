@@ -1,4 +1,4 @@
-import 'package:fin_smart/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:fin_smart/core/common/cubits/app_user/user_session_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,10 +10,11 @@ class AccountHomeScreen extends StatefulWidget {
 }
 
 class _AccountHomeScreenState extends State<AccountHomeScreen> {
-  
   @override
   Widget build(BuildContext context) {
-    print("access token: ${context.read<AppUserCubit>().state.accessToken}");
+    print(
+      "access token: ${context.read<UserSessionCubit>().state.accessToken}",
+    );
     return const Placeholder();
   }
 }

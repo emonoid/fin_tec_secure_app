@@ -1,7 +1,8 @@
 enum ThemeModes { light, dark }
-enum AppUserStatus {
-  unknown,      
+
+enum UserSessionStatus {
+  unknown,
   unauthenticated,
-  authenticating,  
+  authenticating,
   authenticated,
 }
