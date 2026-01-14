@@ -136,7 +136,7 @@ class NetworkServicesImpl implements NetworkServices {
       final response = await _dio.post(
         ApiEndPoints.refreshToken,
         data: json.encode({'refresh_token': refreshToken}),
-        options: Options(headers: {'Content-Type': 'application/json'}),
+        options: Options(headers: {'Content-Type': 'application   b /json'}),
       );
 
       if (response.statusCode == 200) {
