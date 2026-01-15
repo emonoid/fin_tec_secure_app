@@ -28,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
 
-    context.read<AuthCubit>().securityChecks(context);
+    // context.read<AuthCubit>().securityChecks(context);
   }
 
   @override

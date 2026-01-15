@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
+import 'package:flutter/services.dart';
 import 'package:fin_smart/application.dart';
 import 'package:fin_smart/core/common/cubits/app_user/user_session_cubit.dart';
 import 'package:fin_smart/core/constants/api_endpoints.dart';
@@ -9,6 +12,8 @@ import 'package:fin_smart/inti.dependencies.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'network_service.dart';
+
+// openssl x509 -inform der -in server_cert.cer -out server_cert.pem
 
 class NetworkServicesImpl implements NetworkServices {
   late final Dio _dio;
@@ -25,6 +30,8 @@ class NetworkServicesImpl implements NetworkServices {
         validateStatus: (status) => status != null,
       ),
     );
+
+    _getPinnedAdapter().then((adapter) => _dio.httpClientAdapter = adapter);
 
     _dio.interceptors.add(
       InterceptorsWrapper(
@@ -73,6 +80,24 @@ class NetworkServicesImpl implements NetworkServices {
           handler.next(response);
         },
       ),
+    );
+  }
+
+  Future<HttpClientAdapter> _getPinnedAdapter() async {
+    final cert = await rootBundle.load('assets/certificates/fin_c.pem');
+
+    final securityContext = SecurityContext.defaultContext;
+    securityContext.setTrustedCertificatesBytes(cert.buffer.asUint8List());
+
+    return IOHttpClientAdapter(
+      createHttpClient: () {
+        final client = HttpClient(context: securityContext);
+
+        client.badCertificateCallback =
+            (X509Certificate cert, String host, int port) => false;
+
+        return client;
+      },
     );
   }
 
@@ -136,7 +161,7 @@ class NetworkServicesImpl implements NetworkServices {
       final response = await _dio.post(
         ApiEndPoints.refreshToken,
         data: json.encode({'refresh_token': refreshToken}),
-        options: Options(headers: {'Content-Type': 'application   b /json'}),
+        options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
       if (response.statusCode == 200) {
